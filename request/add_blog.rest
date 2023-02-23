@@ -1,0 +1,11 @@
+POST http://localhost:3002/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikxldm9uIiwiaWQiOiI2M2Y2YzcyZDRlODVjOTMxMzU5YThkMjEiLCJpYXQiOjE2NzcxMTk3NTUsImV4cCI6MTY3NzEyMzM1NX0.FfIdlK61aFhxPjuxc0i270b9uSoEZ-VRD418e_FwQyA
+
+{
+    "title": "3th Vlog on 23th Feb",
+    "autor": "Levon",
+    "url": "https://reactjs.org/community/courses.html",
+    "likes": 116,
+    "userId": "63f6c72d4e85c931359a8d21"
+}
