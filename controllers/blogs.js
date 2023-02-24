@@ -1,15 +1,8 @@
 const blogsRouter = require("express").Router();
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
-
-const getTokenFrom = request => {
-  const authorization = request.get('Authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
+const mongoose = require("mongoose");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
@@ -19,11 +12,11 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
+    return response.status(401).json({ error: "token invalid" });
   }
-  const user = await User.findById(decodedToken.id)
+  const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({
     title: body.title,
@@ -38,6 +31,34 @@ blogsRouter.post("/", async (request, response) => {
   await user.save();
 
   response.status(201).json(savedBlog);
+});
+
+blogsRouter.put("/:id", async (request, response) => {
+  // console.log('blogsRouter.put', request.body)
+  const body = request.body;
+
+  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  // const user = await User.findById(decodedToken.id);
+
+  const newBlog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+  };
+
+  Blog.findByIdAndUpdate(body._id, newBlog, { new: true })
+    .then((updatedBlog) => {
+      // console.log("updated, updatedBlog :", updatedBlog);
+      response.status(201).json(updatedBlog);
+    })
+    .catch((error) => {
+      console.log("update fail,", error);
+      return response.status(401).json({ error: "update fail!" });
+    });
 });
 
 module.exports = blogsRouter;
